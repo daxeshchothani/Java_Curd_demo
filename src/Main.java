@@ -165,42 +165,67 @@ public class Main {
 
 
                     //Batch patching with prepprepared Statements
-            String query = String.format("INSERT INTO students (name,age,marks) VALUES (?, ? ,?)");
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            Statement statement = connection.createStatement();
-            Scanner scanner = new Scanner(System.in);
-            while (true){
-                System.out.print("Enter name : ");
-                String name =scanner.next();
-                System.out.print("Enter age : ");
-                int age =scanner.nextInt();
-                System.out.print("Enter marks : ");
-                double marks =scanner.nextDouble();
-                System.out.println("Enter more Data(Y/N): ");
-                String choice = scanner.next();
-                preparedStatement.setString(1,name);
-                preparedStatement.setInt(2,age);
-                preparedStatement.setDouble(3,marks);
-                preparedStatement.addBatch();
-                if(choice.toUpperCase().equals("N")){
-                    break;
-                }
-            }
-            int[] arr = preparedStatement.executeBatch();
-            for (int i =0; i<arr.length; i++){
-                if(arr[i]==0){
-                    System.out.println("Querry:"+i+ " not executed Successfully !!!!!");
-                }
-            }
+//            String query = String.format("INSERT INTO students (name,age,marks) VALUES (?, ? ,?)");
+//            PreparedStatement preparedStatement = connection.prepareStatement(query);
+//            Statement statement = connection.createStatement();
+//            Scanner scanner = new Scanner(System.in);
+//            while (true){
+//                System.out.print("Enter name : ");
+//                String name =scanner.next();
+//                System.out.print("Enter age : ");
+//                int age =scanner.nextInt();
+//                System.out.print("Enter marks : ");
+//                double marks =scanner.nextDouble();
+//                System.out.println("Enter more Data(Y/N): ");
+//                String choice = scanner.next();
+//                preparedStatement.setString(1,name);
+//                preparedStatement.setInt(2,age);
+//                preparedStatement.setDouble(3,marks);
+//                preparedStatement.addBatch();
+//                if(choice.toUpperCase().equals("N")){
+//                    break;
+//                }
+//            }
+//            int[] arr = preparedStatement.executeBatch();
+//            for (int i =0; i<arr.length; i++){
+//                if(arr[i]==0){
+//                    System.out.println("Querry:"+i+ " not executed Successfully !!!!!");
+//                }
+//            }
+//
+//    } catch (SQLException e) {
+//        System.out.println(e.getMessage());
+//    }
 
+            //Transasction
+            String debit_query = "UPDATE accounts SET balance= balance - ? WHERE account_number =?";
+            String credit_query = "UPDATE accounts SET balance= balance + ? WHERE account_number =?";
+            PreparedStatement debitPreparedStatement = connection.prepareStatement(debit_query);
+            PreparedStatement creditPreparedStatement = connection.prepareStatement(credit_query);
+            debitPreparedStatement.setDouble(1,500);
+            debitPreparedStatement.setInt(2,101);
+            creditPreparedStatement.setDouble(1,101);
+            creditPreparedStatement.setInt(2,102);
+            int affectedRows1 = debitPreparedStatement.executeUpdate();
+            int affectedRows2 = creditPreparedStatement.executeUpdate();
 
-
-
-
-
-
-    } catch (SQLException e) {
+        } catch (SQLException e) {
         System.out.println(e.getMessage());
+    }
+
+}
+static boolean isSufficient (Connection connection, int account_number, double amount){
+        try {
+            String query = "SELECT balance From acoounts WHERE account_number =?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,account_number);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                current_balance = resultSet.getDouble()
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+
     }
 }
 }
