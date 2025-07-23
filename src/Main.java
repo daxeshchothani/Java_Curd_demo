@@ -133,6 +133,40 @@ public class Main {
 //    }
 
         // Batch patching
+//            Statement statement = connection.createStatement();
+//            Scanner scanner = new Scanner(System.in);
+//            while (true){
+//                System.out.print("Enter name : ");
+//                String name =scanner.next();
+//                System.out.print("Enter age : ");
+//                int age =scanner.nextInt();
+//                System.out.print("Enter marks : ");
+//                double marks =scanner.nextDouble();
+//                System.out.println("Enter more Data(Y/N): ");
+//                String choice = scanner.next();
+//                String query = String.format("INSERT INTO students (name,age,marks) VALUES ('%s', %d ,%f)");
+//
+//                statement.addBatch(query);
+//                if(choice.toUpperCase().equals("N")){
+//                    break;
+//                }
+//            }
+//            int[] arr = statement.executeBatch();
+//            for (int i =0; i<arr.length; i++){
+//                if(arr[i]==0){
+//                    System.out.println("Querry:"+i+ " not executed Successfully !!!!!");
+//                }
+//            }
+//
+//
+//    } catch (SQLException e) {
+//        System.out.println(e.getMessage());
+//    }
+
+
+                    //Batch patching with prepprepared Statements
+            String query = String.format("INSERT INTO students (name,age,marks) VALUES (?, ? ,?)");
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             Statement statement = connection.createStatement();
             Scanner scanner = new Scanner(System.in);
             while (true){
@@ -144,14 +178,15 @@ public class Main {
                 double marks =scanner.nextDouble();
                 System.out.println("Enter more Data(Y/N): ");
                 String choice = scanner.next();
-                String query = String.format("INSERT INTO students (name,age,marks) VALUES ('%s', %d ,%f)", name, age, marks);
-
-                statement.addBatch(query);
+                preparedStatement.setString(1,name);
+                preparedStatement.setInt(2,age);
+                preparedStatement.setDouble(3,marks);
+                preparedStatement.addBatch();
                 if(choice.toUpperCase().equals("N")){
                     break;
                 }
             }
-            int[] arr = statement.executeBatch();
+            int[] arr = preparedStatement.executeBatch();
             for (int i =0; i<arr.length; i++){
                 if(arr[i]==0){
                     System.out.println("Querry:"+i+ " not executed Successfully !!!!!");
@@ -162,7 +197,5 @@ public class Main {
     } catch (SQLException e) {
         System.out.println(e.getMessage());
     }
-
-
 }
 }
